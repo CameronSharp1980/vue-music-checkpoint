@@ -6,6 +6,7 @@ vue.use(vuex)
 
 var store = new vuex.Store({
   state: {
+    activePlaylist: '',
     myPlaylists: [],
     myTunes: [],
     results: []
@@ -16,6 +17,7 @@ var store = new vuex.Store({
     },
     setMyPlaylists(state, data) {
       state.myPlaylists = data
+      state.activePlaylist = state.myPlaylists[0]
     },
     setMyTunes(state, data) {
       state.myTunes = data
@@ -51,9 +53,30 @@ var store = new vuex.Store({
           commit('setMyTunes', data)
         })
     },
-    addToMyTunes({ commit, dispatch }, track) {
+    addToMyTunes({ commit, dispatch }, payload) {
       //this will post to your server adding a new track to your tunes
-      console.log("From store: ", track)
+      console.log("From store: ", payload)
+      var url = '//localhost:3000/api/songs'
+      $.post(url, {
+        title: payload.song.trackName,
+        albumArt: payload.song.artworkUrl100,
+        artist: payload.song.artistName,
+        coll: payload.song.collectionName,
+        price: payload.song.trackPrice,
+        preview: payload.song.previewUrl,
+        kind: payload.song.kind,
+        playlistId: payload.activePlaylist._id
+      })
+        .then(dispatch('getMyTunes'))
+      // .catch(err) // COME BACK TO THIS LATER. ERR IS NOT DEFINED? (SAME FROM .FAIL)
+
+      // ERASE THIS AFTER GETTING THE ABOVE FUNCTION WORKING (ADD TO MY TUNES)
+      // this.regUser = function regUser(form, getPosts) {
+      //   var newUser = new BuildUser(form)
+      //   $.post(baseUrl + '/register', newUser)
+      //     .then(getPosts)
+      //     .fail(logError)
+      // }
 
     },
     removeTrack({ commit, dispatch }, track) {

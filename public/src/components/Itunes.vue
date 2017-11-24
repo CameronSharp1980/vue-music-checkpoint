@@ -8,7 +8,7 @@
             </form>
         </div>
         <div class="songList col-sm-12 col-md-6 col-lg-6 thumbnail" v-for="(song, i) in searchResults" v-if="song.kind == 'song'">
-            <button class="glyphicon glyphicon-plus pull-right" @click="addToMyTunes(song)"></button>
+            <button class="glyphicon glyphicon-plus pull-right" @click="addToMyTunes(song, activePlaylist)"></button>
             <img :src="song.artworkUrl100" alt="Album art" class="song-thumb">
             <h2 class="song-title">{{song.trackName}}</h2>
             <h3 class="song-artist">{{song.artistName}}</h3>
@@ -35,14 +35,17 @@
             getMusicByArtist() {
                 this.$store.dispatch('getMusicByArtist', this.searchField)
             },
-            addToMyTunes(song) {
+            addToMyTunes(song, activePlaylist) {
                 // console.log(song)
-                this.$store.dispatch('addToMyTunes', song)
+                this.$store.dispatch('addToMyTunes', {song, activePlaylist})
             }
         },
         computed: {
             searchResults() {
                 return this.$store.state.results
+            },
+            activePlaylist(){
+                return this.$store.state.activePlaylist
             }
         }
     }
