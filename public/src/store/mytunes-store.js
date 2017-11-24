@@ -6,12 +6,19 @@ vue.use(vuex)
 
 var store = new vuex.Store({
   state: {
+    myPlaylists: [],
     myTunes: [],
     results: []
   },
   mutations: {
     setResults(state, results) {
       state.results = results
+    },
+    setMyPlaylists(state, data) {
+      state.myPlaylists = data
+    },
+    setMyTunes(state, data) {
+      state.myTunes = data
     }
   },
   actions: {
@@ -27,11 +34,27 @@ var store = new vuex.Store({
         commit('setResults', data.results)
       })
     },
+    getPlaylists({ commit, dispatch }) {
+      var url = '//localhost:3000/api/playlists'
+      $.get(url).then(data => {
+        // data = JSON.parse(data)
+        console.log(data)
+        commit('setMyPlaylists', data)
+      })
+    },
     getMyTunes({ commit, dispatch }) {
       //this should send a get request to your server to return the list of saved tunes
+      var url = '//localhost:3000/api/songs'
+      $.get(url)
+        .then(data => {
+          console.log(data)
+          commit('setMyTunes', data)
+        })
     },
     addToMyTunes({ commit, dispatch }, track) {
       //this will post to your server adding a new track to your tunes
+      console.log("From store: ", track)
+
     },
     removeTrack({ commit, dispatch }, track) {
       //Removes track from the database with delete
