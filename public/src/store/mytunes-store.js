@@ -20,8 +20,18 @@ var store = new vuex.Store({
       state.activePlaylist = state.myPlaylists[0]
     },
     setMyTunes(state, data) {
+      // FOR LOOP THAT REORDERS THE ARRAY BY RANKING BEFORE SETTING THE STATE
       state.myTunes = data
+    },
+    pushMyTune(state, newSong) {
+      state.myTunes.push(newSong)
     }
+    // delMyTune(state, songId) {
+    //   for (let i = 0; i < state.myTunes.length; i++) {
+    //     const myTune = state.myTunes[i];
+    //     if (myTune.)
+    //   }
+    // }
   },
   actions: {
     getMusicByArtist({ commit, dispatch }, artist) {
@@ -30,34 +40,39 @@ var store = new vuex.Store({
       // var apiUrl = url + encodeURIComponent(url2);
       var apiUrl = encodeURIComponent(url2); //temporary while bcw getter seems to be down!!!
       //assuming that they get the bcw getter working, the line below should have the api url in the get parenths adn the line above should be replaced with the commented line above it!!!
-      $.get(url2).then(data => {
-        data = JSON.parse(data)
-        console.log(data)
-        commit('setResults', data.results)
-      })
+      $.get(url2)
+        .then(data => {
+          data = JSON.parse(data)
+          console.log(data)
+          commit('setResults', data.results)
+        })
+        .fail(err => { console.log(err) })
     },
     getPlaylists({ commit, dispatch }) {
       var url = '//localhost:3000/api/playlists'
-      $.get(url).then(data => {
-        // data = JSON.parse(data)
-        console.log(data)
-        commit('setMyPlaylists', data)
-      })
+      $.get(url)
+        .then(data => {
+          // data = JSON.parse(data)
+          console.log("Playlist data: ", data)
+          commit('setMyPlaylists', data)
+        })
+        .fail(err => { console.log(err) })
     },
     getMyTunes({ commit, dispatch }) {
       //this should send a get request to your server to return the list of saved tunes
       var url = '//localhost:3000/api/songs'
       $.get(url)
         .then(data => {
-          console.log(data)
+          console.log("Song data: ", data)
           commit('setMyTunes', data)
         })
+        .fail(err => { console.log(err) })
     },
     addToMyTunes({ commit, dispatch }, payload) {
       //this will post to your server adding a new track to your tunes
       console.log("From store: ", payload)
       var url = '//localhost:3000/api/songs'
-      $.post(url, {
+      var newSong = {
         title: payload.song.trackName,
         albumArt: payload.song.artworkUrl100,
         artist: payload.song.artistName,
@@ -65,10 +80,17 @@ var store = new vuex.Store({
         price: payload.song.trackPrice,
         preview: payload.song.previewUrl,
         kind: payload.song.kind,
+        ranking: payload.myTunes.length,
         playlistId: payload.activePlaylist._id
-      })
-        .then(dispatch('getMyTunes'))
-      // .catch(err) // COME BACK TO THIS LATER. ERR IS NOT DEFINED? (SAME FROM .FAIL)
+      }
+      $.post(url, newSong)
+        // .then(commit('pushMyTune', newSong))
+        .then(res => {
+          console.log("Response after posting song: ", res)
+          dispatch('getPlaylists')
+            .then(dispatch('getMyTunes'))
+        })
+        .fail(err => { console.log(err) })
 
       // ERASE THIS AFTER GETTING THE ABOVE FUNCTION WORKING (ADD TO MY TUNES)
       // this.regUser = function regUser(form, getPosts) {
@@ -79,8 +101,50 @@ var store = new vuex.Store({
       // }
 
     },
-    removeTrack({ commit, dispatch }, track) {
+    removeTrack({ commit, dispatch }, payload) {
       //Removes track from the database with delete
+      var deletedIndex = 0
+      for (var i = 0; i < payload.myTunes.length; i++) {
+        var myTune = payload.myTunes[i];
+        if (myTune._id == payload.songId) {
+          deletedIndex = i
+          break
+        }
+      }
+      debugger
+      for (var j = deletedIndex + 1; j < payload.myTunes.length; j++) {
+        var element = payload.myTunes[j];
+        $.ajax({
+          method: 'PUT',
+          url: '//localhost:3000/api/songs/' + element._id,
+          data: { ranking: j - 1 }
+        })
+      }
+      console.log("Deleted Index: ", deletedIndex)
+      console.log("Removing song at ID: ", payload.songId)
+      // var url = '//localhost:3000/song/' + songId
+      $.ajax({
+        method: 'DELETE',
+        url: '//localhost:3000/api/songs/' + payload.songId
+      })
+        .then(res => {
+          // debugger
+          console.log("Response after deleting song: ", res)
+          dispatch('getPlaylists')
+            .then(dispatch('getMyTunes'))
+        })
+        .fail(err => { console.log(err) })
+
+
+      // this.removeComment = function removeComment(postId, commentId, getComments){
+      //   $.ajax({
+      //     method: 'DELETE',
+      //     url: baseUrl + `/forum/posts/${postId}/comments/${commentId}`
+      //   })
+      //     .then(getComments(postId))
+      //     .fail(logError)
+      //   }
+
     },
     promoteTrack({ commit, dispatch }, track) {
       //this should increase the position / upvotes and downvotes on the track

@@ -37,5 +37,5 @@ server.use(mySongRoutes)
 
 
 server.listen(port, () => {
-    console.log("Server listenint on port: ", port)
+    console.log("Server listening on port: ", port)
 })

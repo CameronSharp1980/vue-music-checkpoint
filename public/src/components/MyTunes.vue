@@ -7,6 +7,7 @@
             </div>
             <div class="song-list">
                 <div class="song-entry" v-for="(song, i) in myTunes" v-if="song.playlistId == playlist._id">
+                    <button class="glyphicon glyphicon-trash pull-right" @click="removeTrack(song._id, myTunes)"></button>
                     <img :src="song.albumArt" alt="Album art" class="song-thumb">
                     <h5 class="song-title">{{song.title}} : {{song.artist}}</h5>
                     <audio controls :src="song.preview" preload="auto" class="audio-preview"></audio>
@@ -28,6 +29,11 @@
         mounted() {
             this.$store.dispatch('getPlaylists'),
                 this.$store.dispatch('getMyTunes')
+        },
+        methods: {
+            removeTrack(songId, myTunes) {
+                this.$store.dispatch('removeTrack', { songId, myTunes })
+            }
         },
         computed: {
             myPlaylists() {

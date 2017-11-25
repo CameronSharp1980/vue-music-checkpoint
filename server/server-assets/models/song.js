@@ -11,6 +11,7 @@ var schema = new mongoose.Schema({
     price: { type: Number, required: true },
     preview: { type: String, required: true },
     kind: { type: String, required: true },
+    ranking: { type: Number, required: true },
     playlistId: { type: ObjectId, required: true, ref: 'Playlist' }
 });
 

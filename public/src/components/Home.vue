@@ -1,9 +1,11 @@
 <template>
   <div class="home">
     <!-- YOU WILL PROBABLY END UP WITH SOMETHING LIKE THIS -->
-    <div class="row">
-      <my-tunes class="my-tunes col-sm-12 col-md-6 col-lg-4"></my-tunes>
-      <itunes class="itunes col-sm-12 col-md-6 col-lg-8"></itunes>
+    <div class="container-fluid">
+      <div class="row">
+        <my-tunes class="my-tunes col-sm-12 col-md-6 col-lg-4"></my-tunes>
+        <itunes class="itunes col-sm-12 col-md-6 col-lg-8"></itunes>
+      </div>
     </div>
   </div>
 </template>

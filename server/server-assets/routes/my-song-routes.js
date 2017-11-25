@@ -21,6 +21,17 @@ router.post('/api/songs', (req, res, next) => {
         .catch(err => res.status(400).send(err))
 })
 
+router.put('/api/songs/:id', (req, res, next) => {
+    Songs.findByIdAndUpdate(req.params.id, req.body)
+        .then(song => {
+            // song.update() //BUGGAH?
+            res.send({ message: 'You\'ve updated your song!' })
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
 router.delete('/api/songs/:id', (req, res, next) => {
     Songs.findByIdAndRemove(req.params.id)
         .then((songs) => {
