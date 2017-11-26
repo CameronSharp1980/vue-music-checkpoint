@@ -21,6 +21,17 @@ var store = new vuex.Store({
     },
     setMyTunes(state, data) {
       // FOR LOOP THAT REORDERS THE ARRAY BY RANKING BEFORE SETTING THE STATE
+      // var tempData = []
+      // for (let i = 0; i < data.length; i++) {
+      //   const tune = data[i];
+
+      // }
+      data.sort(function (a, b) {
+        if (a.ranking < b.ranking) return -1;
+        else if (a.ranking > b.ranking) return 1;
+        else return 0;
+      })
+      console.log("Data: ", data)
       state.myTunes = data
     },
     pushMyTune(state, newSong) {
@@ -111,7 +122,6 @@ var store = new vuex.Store({
           break
         }
       }
-      debugger
       for (var j = deletedIndex + 1; j < payload.myTunes.length; j++) {
         var element = payload.myTunes[j];
         $.ajax({
@@ -146,11 +156,80 @@ var store = new vuex.Store({
       //   }
 
     },
-    promoteTrack({ commit, dispatch }, track) {
+    promoteTrack({ commit, dispatch }, payload) {
       //this should increase the position / upvotes and downvotes on the track
+      for (var i = 0; i < payload.myTunes.length; i++) {
+        // console.log("test test", payload.myTunes)
+        // const tuneElement = payload.myTunes[i];
+        if (payload.myTunes[i]._id == payload.song._id) {
+          if (i == 0) {
+            break
+          }
+          console.log("Promoting track: ", payload.myTunes[i]._id, payload.myTunes[i].title)
+          $.ajax({
+            method: 'PUT',
+            url: '//localhost:3000/api/songs/' + payload.myTunes[i]._id,
+            data: { ranking: i - 1 }
+          })
+            .then(res => {
+              // debugger
+              console.log("Promoting song: ", payload.myTunes[i].title + "to ranking (index) : ", i - 1)
+              // dispatch('getPlaylists')
+              //   .then(dispatch('getMyTunes'))
+            })
+            .fail(err => { console.log(err) })
+          $.ajax({
+            method: 'PUT',
+            url: '//localhost:3000/api/songs/' + payload.myTunes[i - 1]._id,
+            data: { ranking: payload.myTunes[i - 1].ranking + 1 }
+          })
+            .then(res => {
+              // debugger
+              console.log("Demoting song: ", payload.myTunes[i - 1].title + "to ranking (index) : ", i + 1)
+              dispatch('getPlaylists')
+                .then(dispatch('getMyTunes'))
+            })
+            .fail(err => { console.log(err) })
+          break
+        }
+      }
     },
-    demoteTrack({ commit, dispatch }, track) {
+    demoteTrack({ commit, dispatch }, payload) {
       //this should decrease the position / upvotes and downvotes on the track
+      for (var i = 0; i < payload.myTunes.length; i++) {
+        // const tuneElement = payload.myTunes[i];
+        if (payload.myTunes[i]._id == payload.song._id) {
+          if (i == payload.myTunes.length - 1) {
+            break
+          }
+          console.log("Demoting track: ", payload.myTunes[i]._id, payload.myTunes[i].title)
+          $.ajax({
+            method: 'PUT',
+            url: '//localhost:3000/api/songs/' + payload.myTunes[i]._id,
+            data: { ranking: i + 1 }
+          })
+            .then(res => {
+              // debugger
+              console.log("Demoting song: ", payload.myTunes[i].title + "to ranking (index) : ", i + 1)
+              // dispatch('getPlaylists')
+              //   .then(dispatch('getMyTunes'))
+            })
+            .fail(err => { console.log(err) })
+          $.ajax({
+            method: 'PUT',
+            url: '//localhost:3000/api/songs/' + payload.myTunes[i + 1]._id,
+            data: { ranking: payload.myTunes[i + 1].ranking - 1 }
+          })
+            .then(res => {
+              // debugger
+              console.log("Promoting song: ", payload.myTunes[i + 1].title + "to ranking (index) : ", i - 1)
+              dispatch('getPlaylists')
+                .then(dispatch('getMyTunes'))
+            })
+            .fail(err => { console.log(err) })
+          break
+        }
+      }
     }
 
   }
