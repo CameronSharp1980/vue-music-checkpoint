@@ -3,8 +3,8 @@
     <!-- YOU WILL PROBABLY END UP WITH SOMETHING LIKE THIS -->
     <div class="container-fluid">
       <div class="row">
-        <my-tunes class="my-tunes col-sm-12 col-md-6 col-lg-4"></my-tunes>
-        <itunes class="itunes col-sm-12 col-md-6 col-lg-8"></itunes>
+        <my-tunes class="my-tunes col-sm-12 col-md-6"></my-tunes>
+        <itunes class="itunes col-sm-12 col-md-6"></itunes>
       </div>
     </div>
   </div>
@@ -30,16 +30,22 @@
 
 
 <style>
+  .home {
+    background: url("../assets/img/guitars.jpeg");
+    background-position: center;
+    background-attachment: fixed;
+  }
+
   .my-tunes {
     /* display: inline-block; */
     min-height: 500px;
     /* min-width: 50%; */
-    background: green;
+    /* background: green; */
   }
 
   .itunes {
     /* display: inline-block; */
-    background: red;
+    /* background: red; */
     min-height: 500px;
     /* min-width: 45%; */
   }
