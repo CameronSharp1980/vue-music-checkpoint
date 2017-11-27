@@ -50,7 +50,7 @@ var store = new vuex.Store({
       var url2 = 'https://itunes.apple.com/search?term=' + artist;
       // var apiUrl = url + encodeURIComponent(url2);
       var apiUrl = encodeURIComponent(url2); //temporary while bcw getter seems to be down!!!
-      //assuming that they get the bcw getter working, the line below should have the api url in the get parenths adn the line above should be replaced with the commented line above it!!!
+      //After they get the bcw getter working, the line below should have the api url in the get parenths adn the line above should be replaced with the commented line above it!!!
       $.get(url2)
         .then(data => {
           data = JSON.parse(data)

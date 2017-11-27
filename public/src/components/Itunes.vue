@@ -1,17 +1,19 @@
 <template>
     <div class="itunes">
         <!-- YOU WILL PROBABLY END UP WITH SOMETHING LIKE THIS -->
-        <div class="search-box">
-            <form @submit.prevent="getMusicByArtist" class="text-center glass">
+        <div>
+            <form @submit.prevent="getMusicByArtist" class="text-center glass search-box">
                 <input type="text" placeholder="Artist name" v-model="searchField" class="search-field">
                 <button type="submit" class="btn btn-primary glyphicon glyphicon-search search-button"></button>
             </form>
         </div>
         <div class="row">
             <div class="songList col-sm-10 col-sm-offset-1 song-box glass" v-for="(song, i) in searchResults" v-if="song.kind == 'song'">
-                <button class="glyphicon glyphicon-plus pull-right" @click="addToMyTunes(song, activePlaylist, myTunes)"></button>
-                <img :src="song.artworkUrl100" alt="Album art" class="song-thumb">
-                <div>
+                <div class="text-center song-pic">
+                    <button class="glyphicon glyphicon-plus pull-right list-button" @click="addToMyTunes(song, activePlaylist, myTunes)"></button>
+                    <img :src="song.artworkUrl100" alt="Album art" class="song-thumb">
+                </div>
+                <div class="text-center">
                     <h1 class="song-title">{{song.trackName}}</h1>
                     <!-- <h3 class="song-artist"></h3> -->
                     <h3 class="song-collection">{{song.artistName}} - {{song.collectionName}} - Track # {{song.trackNumber}}</h3>
@@ -127,11 +129,29 @@
         margin-bottom: 25px;
     }
 
+    .song-pic {
+        margin-top: 5px;
+    }
+
     /* .song-thumb{
     margin: 15px 15px 60px 15px;
 } */
 
+    .list-button {
+        background: none;
+        background-color: rgba(200, 200, 200, 1);
+        color: #000000;
+        border: none;
+        border-radius: 50%;
+        height: 30px;
+        width: 30px;
+    }
+
     .audio-preview {
         width: 75%;
+    }
+
+    .l-margin-5 {
+        margin-left: 5px;
     }
 </style>
