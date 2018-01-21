@@ -2,6 +2,9 @@ import vue from 'vue'
 import vuex from 'vuex'
 import $ from 'jquery'
 
+var production = !window.location.host.includes('localhost')
+var baseUrl = production ? '//vue-music.herokuapp.com' : '//localhost:3000'
+
 vue.use(vuex)
 
 var store = new vuex.Store({
@@ -60,7 +63,7 @@ var store = new vuex.Store({
         .fail(err => { console.log(err) })
     },
     getPlaylists({ commit, dispatch }) {
-      var url = '//localhost:3000/api/playlists'
+      var url = `${baseUrl}/api/playlists`
       $.get(url)
         .then(data => {
           // data = JSON.parse(data)
@@ -71,7 +74,7 @@ var store = new vuex.Store({
     },
     getMyTunes({ commit, dispatch }) {
       //this should send a get request to your server to return the list of saved tunes
-      var url = '//localhost:3000/api/songs'
+      var url = `${baseUrl}/api/songs`
       $.get(url)
         .then(data => {
           console.log("Song data: ", data)
@@ -82,7 +85,7 @@ var store = new vuex.Store({
     addToMyTunes({ commit, dispatch }, payload) {
       //this will post to your server adding a new track to your tunes
       console.log("From store: ", payload)
-      var url = '//localhost:3000/api/songs'
+      var url = `${baseUrl}/api/songs`
       var newSong = {
         title: payload.song.trackName,
         albumArt: payload.song.artworkUrl100,
@@ -126,7 +129,7 @@ var store = new vuex.Store({
         var element = payload.myTunes[j];
         $.ajax({
           method: 'PUT',
-          url: '//localhost:3000/api/songs/' + element._id,
+          url: `${baseUrl}/api/songs/${element._id}`,
           data: { ranking: j - 1 }
         })
       }
@@ -135,7 +138,7 @@ var store = new vuex.Store({
       // var url = '//localhost:3000/song/' + songId
       $.ajax({
         method: 'DELETE',
-        url: '//localhost:3000/api/songs/' + payload.songId
+        url: `${baseUrl}/api/songs/${payload.songId}`
       })
         .then(res => {
           // debugger
@@ -168,7 +171,7 @@ var store = new vuex.Store({
           console.log("Promoting track: ", payload.myTunes[i]._id, payload.myTunes[i].title)
           $.ajax({
             method: 'PUT',
-            url: '//localhost:3000/api/songs/' + payload.myTunes[i]._id,
+            url: `${baseUrl}/api/songs/${payload.myTunes[i]._id}`,
             data: { ranking: i - 1 }
           })
             .then(res => {
@@ -180,7 +183,7 @@ var store = new vuex.Store({
             .fail(err => { console.log(err) })
           $.ajax({
             method: 'PUT',
-            url: '//localhost:3000/api/songs/' + payload.myTunes[i - 1]._id,
+            url: `${baseUrl}/api/songs/${payload.myTunes[i - 1]._id}`,
             data: { ranking: payload.myTunes[i - 1].ranking + 1 }
           })
             .then(res => {
@@ -205,7 +208,7 @@ var store = new vuex.Store({
           console.log("Demoting track: ", payload.myTunes[i]._id, payload.myTunes[i].title)
           $.ajax({
             method: 'PUT',
-            url: '//localhost:3000/api/songs/' + payload.myTunes[i]._id,
+            url: `${baseUrl}/api/songs/${payload.myTunes[i]._id}`,
             data: { ranking: i + 1 }
           })
             .then(res => {
@@ -217,7 +220,7 @@ var store = new vuex.Store({
             .fail(err => { console.log(err) })
           $.ajax({
             method: 'PUT',
-            url: '//localhost:3000/api/songs/' + payload.myTunes[i + 1]._id,
+            url: `${baseUrl}/api/songs/${payload.myTunes[i + 1]._id}`,
             data: { ranking: payload.myTunes[i + 1].ranking - 1 }
           })
             .then(res => {

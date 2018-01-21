@@ -14,6 +14,7 @@ var port = 3000
 
 
 //middleware
+server.use(express.static(__dirname + '/../public/dist'))
 server.use(cors({}))
 server.use(bp.json())
 server.use(bp.urlencoded({ extended: true }))
