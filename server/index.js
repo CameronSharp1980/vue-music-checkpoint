@@ -37,6 +37,6 @@ server.use(mySongRoutes)
 //deleteTrack (DELETE)
 
 
-server.listen(port, () => {
+server.listen(process.env.PORT || port, () => {
     console.log("Server listening on port: ", port)
 })
